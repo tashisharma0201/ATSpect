@@ -1,0 +1,107 @@
+/* Additional component-specific styles */
+
+/* Loading spinner enhancement */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Gradient text utilities */
+.gradient-text {
+  background: linear-gradient(to right, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Form input styles */
+.form-input {
+  @apply w-full px-4 py-2 border border-gray-300 rounded-lg;
+  @apply focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+  @apply transition-colors duration-200;
+}
+
+.form-textarea {
+  @apply form-input resize-y min-h-[100px];
+}
+
+
+.form-label {
+  @apply block text-sm font-medium text-gray-700 mb-2;
+}
+
+/* Error and success states */
+.error-border {
+  @apply border-red-300 bg-red-50;
+}
+
+.success-border {
+  @apply border-green-300 bg-green-50;
+}
+
+/* File upload specific styles */
+.dropzone-active {
+  @apply border-blue-400 bg-blue-50;
+}
+
+.dropzone-error {
+  @apply border-red-300 bg-red-50;
+}
+
+/* Score visualization styles */
+.score-circle svg {
+  transform: rotate(-90deg);
+}
+
+.score-gauge {
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+/* Mobile responsive improvements */
+@media (max-width: 640px) {
+  .primary-button {
+    @apply text-sm px-3 py-2;
+  }
+  
+  .card-padding {
+    @apply p-4;
+  }
+  
+  .mobile-text-sm {
+    @apply text-sm;
+  }
+}
+
+/* Dark mode support (optional) */
+@media (prefers-color-scheme: dark) {
+  /* Add dark mode styles if needed */
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-break {
+    page-break-after: always;
+  }
+}
