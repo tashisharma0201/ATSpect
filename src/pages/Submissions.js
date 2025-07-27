@@ -20,7 +20,7 @@ const Submissions = () => {
 
     setLoading(true);
     setError(null);
-    
+
     try {
       const data = await resumeService.getAll(user.id);
       setSubmissions(data);
@@ -53,7 +53,7 @@ const Submissions = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -71,8 +71,8 @@ const Submissions = () => {
               <span className="font-medium">Error Loading Submissions</span>
             </div>
             <p className="text-red-600 text-sm mb-3">{error}</p>
-            <button 
-              onClick={loadSubmissions} 
+            <button
+              onClick={loadSubmissions}
               className="text-sm text-red-600 hover:text-red-500 underline"
             >
               Try again
@@ -90,8 +90,8 @@ const Submissions = () => {
               <p className="text-gray-600 mb-6">
                 You haven't uploaded any resumes yet. Start by uploading your first resume to get AI-powered feedback.
               </p>
-              <Link 
-                to="/upload" 
+              <Link
+                to="/upload"
                 className="primary-button inline-flex items-center gap-2"
               >
                 ⬆️ Upload Resume
@@ -102,7 +102,10 @@ const Submissions = () => {
           <>
             <div className="space-y-4 mb-8">
               {submissions.map((item) => (
-                <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                <div
+                  key={item.id}
+                  className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                >
                   <div className="p-6">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                       <div className="flex-1 min-w-0">
@@ -128,7 +131,7 @@ const Submissions = () => {
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center gap-6">
                         {item.feedback ? (
                           <div className="flex items-center gap-4 text-center">
@@ -151,7 +154,7 @@ const Submissions = () => {
                             <div className="text-xs">Pending</div>
                           </div>
                         )}
-                        
+
                         <Link
                           to={`/resume/${item.id}`}
                           className="primary-button text-sm px-4 py-2"
@@ -165,17 +168,17 @@ const Submissions = () => {
               ))}
             </div>
 
-            {/* Quick Actions */}
-            <div className="text-center space-x-4">
+            {/* Quick Actions - mobile responsive */}
+            <div className="text-center space-y-4 sm:space-y-0 sm:space-x-4 sm:flex sm:justify-center">
               <Link
                 to="/upload"
-                className="primary-button inline-flex items-center gap-2"
+                className="primary-button inline-flex items-center justify-center gap-2 w-full sm:w-auto"
               >
                 ⬆️ Upload Another Resume
               </Link>
               <Link
                 to="/"
-                className="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-colors inline-flex items-center gap-2"
+                className="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-colors inline-flex items-center justify-center gap-2 w-full sm:w-auto"
               >
                 🏠 Back to Dashboard
               </Link>
