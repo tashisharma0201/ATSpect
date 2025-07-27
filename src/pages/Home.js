@@ -5,6 +5,7 @@ import { resumeService } from '../lib/supabase';
 import Navbar from '../components/Navbar';
 import ResumeCard from '../components/ResumeCard';
 
+
 const Home = () => {
   const { user } = useAuth();
   const [resumes, setResumes] = useState([]);
@@ -35,6 +36,7 @@ const Home = () => {
     loadResumes();
   }, [loadResumes]);
 
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -49,10 +51,11 @@ const Home = () => {
     );
   }
 
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
@@ -97,17 +100,17 @@ const Home = () => {
               ))}
             </div>
             
-            {/* Quick Actions */}
-            <div className="text-center space-x-4">
+            {/* Quick Actions - mobile responsive */}
+            <div className="text-center space-y-4 sm:space-y-0 sm:space-x-4 sm:flex sm:justify-center">
               <Link
                 to="/upload"
-                className="primary-button inline-flex items-center gap-2"
+                className="primary-button inline-flex items-center justify-center gap-2 w-full sm:w-auto"
               >
                 ⬆️ Upload Another Resume
               </Link>
               <Link
                 to="/submissions"
-                className="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-colors inline-flex items-center gap-2"
+                className="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-colors inline-flex items-center justify-center gap-2 w-full sm:w-auto"
               >
                 📋 View All Submissions
               </Link>
