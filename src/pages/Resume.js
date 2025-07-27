@@ -11,8 +11,7 @@ const Resume = () => {
   const { user } = useAuth();
   const { id } = useParams();
   const navigate = useNavigate();
-  
-  // ✅ SIMPLIFIED: Single state object instead of multiple states
+
   const [state, setState] = useState({
     resume: null,
     feedback: null,
@@ -23,25 +22,22 @@ const Resume = () => {
     initialized: false
   });
 
-  // ✅ SIMPLIFIED: Single effect with all logic
   useEffect(() => {
     let mounted = true;
     let resumeObjectUrl = null;
 
     const loadResumeData = async () => {
-      // Don't load if no user or ID
       if (!user?.id || !id) {
         if (mounted) {
-          setState(prev => ({ 
-            ...prev, 
-            loading: false, 
-            error: !user ? 'Authentication required' : 'Invalid resume ID' 
+          setState(prev => ({
+            ...prev,
+            loading: false,
+            error: !user ? 'Authentication required' : 'Invalid resume ID'
           }));
         }
         return;
       }
 
-      // Don't reload if already initialized with same ID
       if (state.initialized && state.resume?.id === id && !state.error) {
         if (mounted) {
           setState(prev => ({ ...prev, loading: false }));
@@ -51,11 +47,10 @@ const Resume = () => {
 
       try {
         if (mounted) {
-          setState(prev => ({ 
-            ...prev, 
-            loading: true, 
+          setState(prev => ({
+            ...prev,
+            loading: true,
             error: null,
-            // Reset data when loading new resume
             resume: null,
             feedback: null,
             imageUrl: '',
@@ -63,17 +58,14 @@ const Resume = () => {
           }));
         }
 
-        console.log('Loading resume:', id);
-
-        // Fetch resume data
         const resumeData = await resumeService.getById(id);
-        
+
         if (!mounted) return;
 
         if (!resumeData) {
-          setState(prev => ({ 
-            ...prev, 
-            loading: false, 
+          setState(prev => ({
+            ...prev,
+            loading: false,
             error: 'Resume not found. It may have been deleted or the link is incorrect.',
             initialized: true
           }));
@@ -81,27 +73,24 @@ const Resume = () => {
         }
 
         if (resumeData.user_id !== user.id) {
-          setState(prev => ({ 
-            ...prev, 
-            loading: false, 
+          setState(prev => ({
+            ...prev,
+            loading: false,
             error: 'You do not have permission to view this resume.',
             initialized: true
           }));
           return;
         }
 
-        // Load image URL if available
         let imageUrl = '';
         if (resumeData.image_path) {
           try {
             imageUrl = await storageService.getFileUrl(resumeData.image_path, { bucket: 'resume-images' });
           } catch (err) {
             console.error('Error loading resume image:', err);
-            // Don't fail the whole load for image errors
           }
         }
 
-        // Load PDF blob if available
         let resumeUrl = '';
         if (resumeData.resume_path) {
           try {
@@ -110,12 +99,11 @@ const Resume = () => {
             resumeUrl = resumeObjectUrl;
           } catch (err) {
             console.error('Error loading resume PDF:', err);
-            // Don't fail the whole load for PDF errors
           }
         }
 
         if (mounted) {
-          setState(prev => ({ 
+          setState(prev => ({
             ...prev,
             resume: resumeData,
             feedback: resumeData.feedback,
@@ -127,14 +115,12 @@ const Resume = () => {
           }));
         }
 
-        console.log('Resume loaded successfully');
-
       } catch (err) {
         console.error('Error loading resume:', err);
         if (mounted) {
-          setState(prev => ({ 
-            ...prev, 
-            loading: false, 
+          setState(prev => ({
+            ...prev,
+            loading: false,
             error: 'A network error occurred. Please check your connection and try again.',
             initialized: true
           }));
@@ -144,25 +130,22 @@ const Resume = () => {
 
     loadResumeData();
 
-    // Cleanup function
     return () => {
       mounted = false;
       if (resumeObjectUrl) {
         URL.revokeObjectURL(resumeObjectUrl);
       }
     };
-  }, [user?.id, id]); // ✅ SIMPLIFIED: Only essential dependencies
+  }, [user?.id, id]);
 
-  // ✅ SIMPLIFIED: Single retry function
   const handleRetry = () => {
-    setState(prev => ({ 
-      ...prev, 
-      initialized: false, 
-      error: null 
+    setState(prev => ({
+      ...prev,
+      initialized: false,
+      error: null
     }));
   };
 
-  // ✅ SIMPLIFIED: Clear loading and error states
   if (state.loading) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -206,13 +189,12 @@ const Resume = () => {
     );
   }
 
-  // ✅ SIMPLIFIED: Main render with destructured state
   const { resume, feedback, imageUrl, resumeUrl } = state;
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
@@ -222,7 +204,7 @@ const Resume = () => {
           >
             ← Return Home
           </Link>
-          
+
           {resume && (
             <div className="bg-white rounded-lg shadow-sm p-6">
               <div className="flex flex-col md:flex-row md:items-center justify-between">
@@ -234,8 +216,7 @@ const Resume = () => {
                     Resume Analysis Report
                   </p>
                 </div>
-                
-                {/* Resume Preview & Download */}
+
                 {imageUrl && resumeUrl && (
                   <div className="mt-4 md:mt-0 flex items-center gap-4">
                     <div className="w-16 h-20 rounded border shadow-sm overflow-hidden">
@@ -269,13 +250,8 @@ const Resume = () => {
 
           {feedback ? (
             <>
-              {/* Summary Section */}
               <Summary feedback={feedback} />
-              
-              {/* ATS Section */}
               <ATS feedback={feedback} />
-              
-              {/* Details Section */}
               <Details feedback={feedback} />
             </>
           ) : (
@@ -297,17 +273,17 @@ const Resume = () => {
           )}
         </div>
 
-        {/* Action Buttons */}
-        <div className="mt-12 text-center space-x-4">
+        {/* Action Buttons - Updated for Mobile Responsive Layout */}
+        <div className="mt-12 text-center space-y-4 md:space-y-0 md:space-x-4 md:flex md:justify-center">
           <Link
             to="/upload"
-            className="primary-button"
+            className="primary-button w-full md:w-auto inline-flex justify-center items-center gap-2"
           >
             📤 Upload Another Resume
           </Link>
           <Link
             to="/submissions"
-            className="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+            className="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-colors w-full md:w-auto inline-flex justify-center items-center gap-2"
           >
             📋 View All Submissions
           </Link>
