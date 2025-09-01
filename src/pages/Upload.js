@@ -661,38 +661,8 @@ Requirements:
                 </button>
               </div>
             </div>
-            {/* RADIO BUTTONS */}
-            <div>
-              <label className="block font-medium mb-2">Resume Intended For:</label>
-              <div className="flex gap-4 mb-2">
-                <label className="flex items-center text-sm">
-                  <input
-                    type="radio"
-                    name="resumeMode"
-                    value="soft"
-                    checked={resumeMode === 'soft'}
-                    onChange={() => setResumeMode('soft')}
-                    className="mr-2"
-                  />
-                  For Recruiter (Soft Copy/PDF)
-                </label>
-                <label className="flex items-center text-sm">
-                  <input
-                    type="radio"
-                    name="resumeMode"
-                    value="hard"
-                    checked={resumeMode === 'hard'}
-                    onChange={() => setResumeMode('hard')}
-                    className="mr-2"
-                  />
-                  For ATS Upload (Hard Copy/Plain Text)
-                </label>
-              </div>
-              <p className="text-xs text-gray-500">
-                <strong>Tip:</strong> Recruiter mode allows icons and links; ATS mode expects only plain text for maximum parsability.
-              </p>
-            </div>
-            {/* END RADIO BUTTONS */}
+            
+                  
             <div>
               <label htmlFor="company-name" className="block text-sm font-medium text-gray-700 mb-2">
                 Company Name *

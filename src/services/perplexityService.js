@@ -20,28 +20,16 @@ const MAX_RETRIES = 2;
  * @param {string} companyName - The name of the company.
  * @returns {Promise<object>} A promise that resolves to the JSON analysis object from the API.
  */
-export async function analyzeResumeWithPerplexity(resumeText, jobTitle, jobDescription, companyName, resumeMode = 'soft') {
+export async function analyzeResumeWithPerplexity(resumeText, jobTitle, jobDescription, companyName) {
   // Mode-dependent instruction strings
- const modeInstruction = resumeMode === 'soft'
-  ? `Note: This resume is intended for recruiter viewing (PDF/digital format). 
+ const modeInstruction =  `Note: This resume is intended for recruiter viewing (PDF/digital format). 
 - Icons, clickable symbols, and links should NOT be flagged as "non-standard symbols" unless they genuinely obscure or confuse information for human readers.
 - Standard bullet points, such as "-", "•" or "*", MUST NOT be flagged as non-standard symbols in this mode. If they are present and used consistently, explicitly state: "Bullet points are used appropriately for clarity."
 - If section headings are visually distinct, call this out as a strength.
 - If links or icons improve scanning/clicking/navigating the resume, note this as a positive feature for recruiters.
-- Only highlight formatting issues that genuinely reduce visual appeal, structure, or usability for a recruiter; do not apply ATS-only rules to this mode.`
+- Only highlight formatting issues that genuinely reduce visual appeal, structure, or usability for a recruiter; do not apply ATS-only rules to this mode.`;
 
-  : `Note: This resume is intended for ATS upload and parsing (hard copy). 
-- The resume should be plain text only: no icons, emojis, special symbols, images, graphical bullets, tables, columns, or sidebars.
-- List every unique symbol, bullet, or unusual formatting detected in the 'formatting_audit' section.
-- Only flag and penalize those symbols that are NOT plain "-", "*", "•", or standard ASCII punctuation (e.g. ! ? . , : ;).
-- For ANY flagged symbol or formatting issue, explain which part of the resume is affected and exactly why ATS parsing would fail or mis-associate data.
-- Check for and penalize: images (including profile photos), text in tables/columns/sidebars, or any section where content is not in plain list form.
-- Set 'contains_tables_or_columns' in the audit to true/false and document what you found if true.
-- Praise single-column, left-aligned formatting, standard bullet points and section headings, and use of text labels for contact info.
-- If all symbols are ATS-compatible, clearly state: "All symbols and bullet points are ATS-compatible."
-- If resume is formatted for maximum ATS compatibility, clearly state: "Resume formatted for maximum ATS compatibility."
-- Do not warn or penalize unless a definite, document-specific ATS risk is found.
-- Your formatting_audit and tips should empower the user to fix only what actually blocks ATS parsing, not simply suggest generic improvements.`;
+
 
 
   const prompt = `
