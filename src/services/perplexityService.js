@@ -6,7 +6,7 @@
 
 // IMPORTANT: Hardcoding keys is insecure. Use environment variables in production.
 // const PERPLEXITY_API_KEY = process.env.REACT_APP_PERPLEXITY_API_KEY;
-const PERPLEXITY_API_KEY = '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';
+const PERPLEXITY_API_KEY = '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';
 
 const PERPLEXITY_API_URL = 'https://api.perplexity.ai/chat/completions';
 const API_TIMEOUT = 60000; // 60 seconds
