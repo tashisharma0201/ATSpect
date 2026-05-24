@@ -9,7 +9,7 @@ import {
   logger,
   promiseWithTimeout
 } from '../lib/supabase';
-import { analyzeResumeWithPerplexity } from '../services/perplexityService';
+import { analyzeResumeWithGemini } from '../services/geminiService';
 import {
   extractTextFromPDF,
   convertPdfToImage,
@@ -411,7 +411,7 @@ Requirements:
       progressTracker.increment('Analyzing resume with AI (this may take up to 90 seconds)...');
       let feedback;
       try {
-        feedback = await analyzeResumeWithPerplexity(resumeText, jobTitle, jobDescription, companyName, resumeMode);
+        feedback = await analyzeResumeWithGemini(resumeText, jobTitle, jobDescription, companyName, resumeMode);
         logger.success('AI analysis completed');
       } catch (aiError) {
         logger.error('AI analysis failed:', aiError);

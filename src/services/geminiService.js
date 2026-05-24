@@ -1,26 +1,31 @@
 // ==============================================================================
-// Perplexity Service for Resume Analysis
+// Gemini Service for Resume Analysis
 // ==============================================================================
 
 // --- CONFIGURATION ---
 
 // IMPORTANT: Hardcoding keys is insecure. Use environment variables in production.
-// const PERPLEXITY_API_KEY = process.env.REACT_APP_PERPLEXITY_API_KEY;
-const PERPLEXITY_API_KEY = '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';
 
-const PERPLEXITY_API_URL = 'https://api.perplexity.ai/chat/completions';
+// const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
+const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
+
+
+const GEMINI_API_URL =`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 const API_TIMEOUT = 60000; // 60 seconds
 const MAX_RETRIES = 2;
 
 /**
- * Analyzes resume text against a job description using the Perplexity API.
+ * Analyzes resume text against a job description using the Gemini API.
  * @param {string} resumeText - The full text of the user's resume.
  * @param {string} jobTitle - The job title for the position.
  * @param {string} jobDescription - The job description for the position.
  * @param {string} companyName - The name of the company.
  * @returns {Promise<object>} A promise that resolves to the JSON analysis object from the API.
  */
-export async function analyzeResumeWithPerplexity(resumeText, jobTitle, jobDescription, companyName) {
+
+
+export async function analyzeResumeWithGemini(resumeText, jobTitle, jobDescription, companyName, resumeMode = 'soft') {
+
   // Mode-dependent instruction strings
  const modeInstruction =  `Note: This resume is intended for recruiter viewing (PDF/digital format). 
 - Icons, clickable symbols, and links should NOT be flagged as "non-standard symbols" unless they genuinely obscure or confuse information for human readers.
@@ -168,63 +173,60 @@ Analyze against current market standards and hiring trends.
   `;
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
-      console.log(`Perplexity API attempt ${attempt}/${MAX_RETRIES}`);
+      console.log(`Gemini API attempt ${attempt}/${MAX_RETRIES}`);
       
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
 
-      const response = await fetch(PERPLEXITY_API_URL, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          // Using your original model choice
-          model: 'sonar-pro',
-          messages: [
-            {
-              role: 'system',
-              content: 'You are an expert resume reviewer. Your task is to analyze the provided resume and job description and respond ONLY with a valid JSON object in the specified format. Do not include any extra text or explanations.'
-            },
-            {
-              role: 'user',
-              content: prompt
-            }
-          ],
-          max_tokens: 4096,
-          temperature: 0.2,
-          stream: false
-        }),
-        signal: controller.signal
-      });
+      const response = await fetch(GEMINI_API_URL, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    contents: [
+      {
+        parts: [
+          {
+            text: prompt
+          }
+        ]
+      }
+    ],
+    generationConfig: {
+      temperature: 0.2,
+      maxOutputTokens: 4096
+    }
+  }),
+  signal: controller.signal
+});
 
       clearTimeout(timeoutId);
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`Perplexity API error: ${response.status} - ${errorText}`);
+        throw new Error(`Gemini API error: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
-      const content = data.choices?.[0]?.message?.content;
+      const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
       if (!content) {
-        throw new Error('No content received from Perplexity API');
+        throw new Error('No content received from Gemini API');
       }
 
       const cleanContent = content.trim().replace(/^```json\s*|```\s*$/g, '');
       const analysisResult = JSON.parse(cleanContent);
       
       if (!analysisResult.overall_score || !analysisResult.categories) {
-        throw new Error('Invalid response structure from Perplexity API');
+        throw new Error('Invalid response structure from Gemini API');
       }
 
-      console.log('Perplexity API success on attempt', attempt);
+      console.log('Gemini API success on attempt', attempt);
       return analysisResult;
 
     } catch (error) {
-      console.error(`Perplexity API attempt ${attempt} failed:`, error);
+      console.error(`Gemini API attempt ${attempt} failed:`, error);
       
       if (attempt === MAX_RETRIES || error.name === 'AbortError') {
         console.error('API analysis failed after all retries.');
